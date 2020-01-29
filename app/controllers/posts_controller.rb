@@ -8,11 +8,23 @@ class PostsController < ApplicationController
   end
 
   def update
-    @post.update(post_params)
-
-    redirect_to post_path(@post)
+    @post = set_post!
+    if @post.update(post_params)
+      redirect_to post_path(@post)
+    else 
+      render :'posts/edit'
+    end
   end
 
+  def create
+    @post = Post.new(params.require(:post).permit(:category, :content, :title))
+    if @post.save
+      redirect_to post_path(@post)
+    else 
+      render :'posts/new'
+    end
+  end 
+  
   private
 
   def post_params
